@@ -1,16 +1,12 @@
-import API.*;
-import model.Response;
+import model.Wallet;
 
-import java.io.IOException;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
 
-        API api = new APIImpl();
-
-        Response response = api.getResponse();
-
-        System.out.println(response);
+        List<Wallet> wallets = new WalletAddresses().getTokensAmounts();
+        wallets.forEach(System.out::println);
 
     }
 }

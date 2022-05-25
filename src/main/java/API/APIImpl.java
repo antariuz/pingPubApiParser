@@ -17,15 +17,49 @@ public class APIImpl implements API {
     );
 
     @Override
-    public Response getResponse() throws Exception {
-        AppHttpResponse response = AppHttpGetRequest.newBuilder()
-                .setUrl("https://api.alley.umeemania-1.network.umee.cc/bank/balances/umee12y0vrvpvh905femugdcc5z6ldd5js5rd0reuk2")
-                .setHeaders(customHeaders)
-                .build().execute();
-
-        if (response.is200()) {
-            System.out.println(response.getString());
-            return response.getInstanceOf(Response.class);
+    public Response getResponse(String walletAddress) throws Exception {
+        if (walletAddress.contains("cosmos")) {
+            AppHttpResponse response = AppHttpGetRequest.newBuilder()
+                    .setUrl("https://api.flash.gaia-umeemania-1.network.umee.cc/bank/balances/" + walletAddress)
+                    .setHeaders(customHeaders)
+                    .build().execute();
+            if (response.is200()) {
+                return response.getInstanceOf(Response.class);
+            }
+        } else if (walletAddress.contains("umee")) {
+            AppHttpResponse response = AppHttpGetRequest.newBuilder()
+                    .setUrl("https://api.alley.umeemania-1.network.umee.cc/bank/balances/" + walletAddress)
+                    .setHeaders(customHeaders)
+                    .build().execute();
+            if (response.is200()) {
+                return response.getInstanceOf(Response.class);
+            }
+        } else if (walletAddress.contains("osmo")) {
+            AppHttpResponse response = AppHttpGetRequest.newBuilder()
+                    .setUrl("https://api.wall.osmosis-umeemania-1.network.umee.cc/bank/balances/" + walletAddress)
+                    .setHeaders(customHeaders)
+                    .build().execute();
+            if (response.is200()) {
+                return response.getInstanceOf(Response.class);
+            }
+        } else if (walletAddress.contains("juno")) {
+            AppHttpResponse response = AppHttpGetRequest.newBuilder()
+                    .setUrl("https://api.section.juno-umeemania-1.network.umee.cc/bank/balances/" + walletAddress)
+                    .setHeaders(customHeaders)
+                    .build().execute();
+            if (response.is200()) {
+                return response.getInstanceOf(Response.class);
+            }
+        } else if (walletAddress.contains("terra")) {
+            AppHttpResponse response = AppHttpGetRequest.newBuilder()
+                    .setUrl("https://api.street.terra-umeemania-1.network.umee.cc/bank/balances/" + walletAddress)
+                    .setHeaders(customHeaders)
+                    .build().execute();
+            if (response.is200()) {
+                return response.getInstanceOf(Response.class);
+            }
+        } else {
+            throw new Exception("Wrong wallet address set");
         }
         return null;
     }

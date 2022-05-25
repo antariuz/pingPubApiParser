@@ -62,35 +62,35 @@ public class AppHttpGetRequest {
     }
 
     public AppHttpResponse execute() throws Exception {
-            URIBuilder uriBuilder = new URIBuilder(url);
-            for (NameValuePair param : params) {
-                uriBuilder.setParameter(param.getName(), param.getValue());
+        URIBuilder uriBuilder = new URIBuilder(url);
+        for (NameValuePair param : params) {
+            uriBuilder.setParameter(param.getName(), param.getValue());
+        }
+
+        HttpGet request = new HttpGet(uriBuilder.build());
+
+        for (BasicHeader header : headers) {
+            request.addHeader(header);
+        }
+        int status = 0;
+        List<BasicHeader> responseHeaders = new ArrayList<>();
+        byte[] byteArray = null;
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(request)) {
+
+            status = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+
+            for (Header header : response.getAllHeaders()) {
+                responseHeaders.add(new BasicHeader(header.getName(), header.getValue()));
             }
 
-            HttpGet request = new HttpGet(uriBuilder.build());
-
-            for (BasicHeader header : headers) {
-                request.addHeader(header);
+            if (entity != null) {
+                byteArray = EntityUtils.toByteArray(entity);
+                EntityUtils.consume(entity);
             }
-            int status = 0;
-            List<BasicHeader> responseHeaders = new ArrayList<>();
-            byte[] byteArray = null;
-
-            try (CloseableHttpClient httpClient = HttpClients.createDefault();
-                 CloseableHttpResponse response = httpClient.execute(request)) {
-
-                status = response.getStatusLine().getStatusCode();
-                HttpEntity entity = response.getEntity();
-
-                for (Header header : response.getAllHeaders()) {
-                    responseHeaders.add(new BasicHeader(header.getName(), header.getValue()));
-                }
-
-                if (entity != null) {
-                    byteArray = EntityUtils.toByteArray(entity);
-                    EntityUtils.consume(entity);
-                }
-                return new AppHttpResponse(status, byteArray, headers);
-            }
+            return new AppHttpResponse(status, byteArray, headers);
+        }
     }
 }
