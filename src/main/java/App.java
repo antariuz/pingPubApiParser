@@ -6,7 +6,7 @@ import java.util.List;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        List<Wallet> wallets = new WalletAddressesService().getTokensAmounts();
+        List<Wallet> wallets = new WalletAddressesService().getTokensAmounts("src/main/resources/addressesMyTest.txt");
 
         wallets.forEach(System.out::println);
 

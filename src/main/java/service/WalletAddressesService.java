@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WalletAddressesService {
-
-    private final Path addressesFile = new File("src/main/resources/addressesMyTest.txt").toPath();
     private final API api = new APIImpl();
     private final Integer U = 1_000_000;
 
-    public List<Wallet> init() throws Exception {
+    public List<Wallet> init(String filePath) throws Exception {
         List<Wallet> wallets = new ArrayList<>();
-        List<String> allLines = Files.readAllLines(addressesFile);
+        List<String> allLines = Files.readAllLines(new File(filePath).toPath());
         for (String line : allLines) {
             Wallet wallet = new Wallet();
             List<Chain> chains = new ArrayList<>();
@@ -48,8 +46,8 @@ public class WalletAddressesService {
         return wallets;
     }
 
-    public List<Wallet> getTokensAmounts() throws Exception {
-        List<Wallet> wallets = init();
+    public List<Wallet> getTokensAmounts(String filePath) throws Exception {
+        List<Wallet> wallets = init(filePath);
         for (Wallet wallet : wallets) {
             for (Chain chain : wallet.getChains()) {
                 List<SubChain> subChainList = new ArrayList<>();
