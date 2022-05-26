@@ -18,10 +18,16 @@ public class Wallet {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append(name).append(";");
+        SubChain subChain;
         for (Chain chain : chains) {
             str.append(chain.getAddress()).append(";");
-            for (SubChain subChain : chain.getSubChain()) {
-                str.append(subChain.getAmount()).append(" ").append(subChain.getDenom()).append(",");
+            for (int i = 0; i < chain.getSubChain().size(); i++) {
+                subChain = chain.getSubChain().get(i);
+                if (i == chain.getSubChain().size() - 1) {
+                    str.append(subChain.getAmount()).append(" ").append(subChain.getDenom());
+                } else {
+                    str.append(subChain.getAmount()).append(" ").append(subChain.getDenom()).append(", ");
+                }
             }
             str.append(";");
         }

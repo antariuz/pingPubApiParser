@@ -1,6 +1,6 @@
 package API;
 
-import model.Response;
+import model.apiModel.Response;
 
 public interface API {
 

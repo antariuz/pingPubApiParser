@@ -1,6 +1,6 @@
 package API;
 
-import model.Response;
+import model.apiModel.Response;
 import org.apache.http.message.BasicHeader;
 import util.httpclient.AppHttpGetRequest;
 import util.httpclient.AppHttpResponse;

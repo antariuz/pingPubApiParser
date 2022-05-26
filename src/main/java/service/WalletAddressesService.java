@@ -1,53 +1,49 @@
+package service;
+
 import API.API;
 import API.APIImpl;
 import model.Chain;
-import model.Result;
+import model.apiModel.Result;
 import model.SubChain;
 import model.Wallet;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WalletAddresses {
+public class WalletAddressesService {
 
-    private final File namesFile = new File("src/main/resources/namesMy.txt");
-    private final File addressesFile = new File("src/main/resources/addressesMy.txt");
+    private final Path addressesFile = new File("src/main/resources/addressesMyTest.txt").toPath();
     private final API api = new APIImpl();
     private final Integer U = 1_000_000;
 
     public List<Wallet> init() throws Exception {
         List<Wallet> wallets = new ArrayList<>();
-        List<String> names = Files.readAllLines(namesFile.toPath());
-        for (String name : names) {
-            Wallet wallet = new Wallet();
-            wallet.setName(name);
-            wallets.add(wallet);
-        }
-        int i = 0;
-        List<String> allLines = Files.readAllLines(addressesFile.toPath());
+        List<String> allLines = Files.readAllLines(addressesFile);
         for (String line : allLines) {
-            String[] addressesList = line.split(";");
+            Wallet wallet = new Wallet();
             List<Chain> chains = new ArrayList<>();
-            for (String address : addressesList) {
-                Chain chain = new Chain();
-                if (address.contains("cosmos")) {
-                    chain.setAddress(address);
-                } else if (address.contains("umee")) {
-                    chain.setAddress(address);
-                } else if (address.contains("osmo")) {
-                    chain.setAddress(address);
-                } else if (address.contains("juno")) {
-                    chain.setAddress(address);
+            String[] addressesList = line.split(";");
+            for (int i = 0; i < addressesList.length; i++) {
+                if (i == 0) {
+                    wallet.setName(addressesList[i]);
                 } else {
-                    throw new Exception("Wrong Chain set");
+                    if (addressesList[i].contains("cosmos") |
+                            addressesList[i].contains("umee") |
+                            addressesList[i].contains("osmo") |
+                            addressesList[i].contains("juno")) {
+                        Chain chain = new Chain();
+                        chain.setAddress(addressesList[i]);
+                        chains.add(chain);
+                    } else {
+                        throw new Exception("Wrong wallet address. Please, check it: " + addressesList[i]);
+                    }
                 }
-                chains.add(chain);
             }
-            Wallet wallet = wallets.get(i);
             wallet.setChains(chains);
-            i++;
+            wallets.add(wallet);
         }
         return wallets;
     }
@@ -59,7 +55,8 @@ public class WalletAddresses {
                 List<SubChain> subChainList = new ArrayList<>();
                 for (Result result : api.getResponse(chain.getAddress()).getResult()) {
                     SubChain subChain = new SubChain();
-                    if (result.getDenom().equals("uatom")) {
+                    if (result.getDenom().equals("uatom") |
+                    result.getDenom().equals("ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2")) {
                         subChain.setDenom("ATOM");
                     } else if (result.getDenom().equals("uumee")) {
                         subChain.setDenom("UMEE");
@@ -69,8 +66,12 @@ public class WalletAddresses {
                     } else if (result.getDenom().equals("ujuno") |
                             result.getDenom().equals("ibc/C814F0B662234E24248AE3B2FE2C1B54BBAF12934B757F6E7BC5AEC119963895")) {
                         subChain.setDenom("JUNO");
+                    } else if (result.getDenom().equals("ibc/A1CA75737A469737878C6A3CCD0D47738E85CCE0C4C341B298928DE7DADE3CDF")) {
+                        subChain.setDenom("LUNA");
+                    } else if (result.getDenom().equals("ibc/B27E587A396CE3964ED0AE196E3BB22CA22C7EE21112F8F81F004313D24142D3")) {
+                        subChain.setDenom("UST");
                     } else {
-                        throw new Exception("Unknown token name: " + result.getDenom());
+                        throw new Exception("Unknown token name: " + result.getDenom() + "\n" + "Wallet address: " + chain.getAddress());
                     }
                     subChain.setAmount(Double.parseDouble(result.getAmount()) / U);
                     subChainList.add(subChain);

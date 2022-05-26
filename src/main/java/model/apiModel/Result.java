@@ -1,10 +1,10 @@
-package model;
+package model.apiModel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result {
 
     private String denom;
